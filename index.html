@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://unpkg.com/vue@next"></script>
+    <title>Document</title>
+</head>
+<body>
+    <div id="app">
+        <div class="nav-bar"></div>
+        <div class="cart">Cart({{ cart }})</div> <!--imprime la valeur du "cart" dans notre data-->
+        <div class="product-display">
+            <div class="product-container">
+                <!--<h2>{{ produit }}</h2>--> <!-- 1 ref a la var produit du js-->
+                <h2>{{ titre }}</h2> <!-- appel de la function titre qui combine la marque et le nom du produit-->
+                <div class="product-image">
+                    <!--image ici -->
+                    <!--on veut bind l'attribut src avec valeur de notre data image
+                    on peut l'écrire <img v-bind:src="image"> ou en raccourcis : <img :src="image">
+                    on bind aussi la classe out-of-stock quand le instock est false: -->
+                    <img :class="{ 'out-of-stock-img': !inStock }" v-bind:src="image">
+                    
+                </div>
+                <div class="product-info">
+                    <h5> {{ description }}</h5> <!--1 ref a la var description du js-->
+                    <!--si la data inStock= true : montre le premier P sinon l'autre (retire du DOM)
+                    si on a pas de if on peut utiliser v-show (bascule la visibilité d'un elem) -->
+                    <!-- <p v-if="inStock">Disponible</p> -->
+                    <p v-if="inventory > 10">En stock ({{inventory}})</p>
+                    <p v-else-if="inventory <= 10 && inventory > 0">Dernières pièces  ! ({{inventory}})</p>
+                    <p v-else>Rupture de stock</p>
+                    <ul>
+                        <!-- pour chaque détail du tab/collection details on itère et on affiche le contenu-->
+                        <li v-for="detail in details"> {{ detail }}</li>
+                    </ul>
+                    <!-- pour chaque element du tab variants, on affiche son attribut "custom"
+                    , on donne à chaque variant une key unique correspondant à son ID
+                    , sur un mouseover on call la methode pour charger l'image associée au variant-->
+                    <p>options : </p>
+                    <div v-for="variant in variants"
+                    :key="variant.id"
+                    @mouseover="updateImage(variant.image)"
+                    class="option-item">
+                    <!-- je charge le background-color correspondant a la valeur de l'attribut variant.color de l'item
+                    je défini une class active qui est true de base (fin chap7 différentes syntaxes)-->
+                    <span class="couleur-option activeClass"
+                    
+                    :style="{ 'background-color': variant.color}">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                    {{ variant.custom }}</div>
+                    <br>
+                    <!-- bouton avec un event v-on (OU @click seulement) sur le clic
+                    qui call la methode addPanier , qui est desactivé quand l'objet n'est pas en stock (false)-->
+                    <button class="button"
+                    :class="{desactiveBtn: !inStock}"
+                    :disabled="!inStock"
+                    v-on:click="addPanier">Ajouter au panier</button>
+                    <button class="button" v-on:click="removePanier">Retirer du panier</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+
+    <script src="main.js"></script>
+
+    <script> // 1 on lie notre app du main.js au DOM
+    // = app(depuis js).mount(select de la div id app)
+        const mountedApp = app.mount('#app')
+    </script>
+</body>
+</html>
